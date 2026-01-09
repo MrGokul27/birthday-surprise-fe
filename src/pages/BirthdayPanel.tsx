@@ -7,24 +7,21 @@ import {
   Snackbar,
   Alert,
   MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import SaveIcon from "@mui/icons-material/Save";
+import CommonTable from "../components/common/CommonTable";
 
 /* 🔒 Validation Schema */
 const schema = yup.object({
   name: yup.string().required("Name is required"),
   gender: yup.string().required("Gender is required"),
+  relationship: yup.string().required("Relationship is required"),
+  contact: yup.string().required("Contact is required"),
   dob: yup.string().required("Date of birth is required"),
   email: yup.string().required("Email is required").email("Enter valid email"),
 });
@@ -36,6 +33,8 @@ type Birthday = {
   name: string;
   age: number;
   gender: string;
+  relationship: string;
+  contact: string;
   dob: string;
   email: string;
 };
@@ -124,9 +123,32 @@ export default function BirthdayPanel() {
     }
   };
 
+  const columns = [
+    { key: "name", label: "Name" },
+    { key: "age", label: "Age" },
+    { key: "gender", label: "Gender" },
+    { key: "relationship", label: "Relationship" },
+    { key: "dob", label: "DOB" },
+    { key: "contact", label: "Contact" },
+    { key: "email", label: "Email" },
+
+    ...(role === "admin"
+      ? [
+          {
+            key: "addedBy",
+            label: "Added By",
+            render: (row) =>
+              row.createdBy_name && row.createdBy_email
+                ? `${row.createdBy_name} (${row.createdBy_email})`
+                : "Unknown",
+          },
+        ]
+      : []),
+  ];
+
   return (
-    <Box>
-      <Typography variant="h6" mb={2}>
+    <Box sx={{ p: 3, boxShadow: 4, borderRadius: 4 }}>
+      <Typography variant="h5" mb={2}>
         Add Birthday Person & their Details
       </Typography>
 
@@ -134,7 +156,7 @@ export default function BirthdayPanel() {
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <TextField
-            label="Name"
+            label="Full Name"
             fullWidth
             {...register("name")}
             error={!!errors.name}
@@ -155,6 +177,24 @@ export default function BirthdayPanel() {
           >
             <MenuItem value="Male">Male</MenuItem>
             <MenuItem value="Female">Female</MenuItem>
+          </TextField>
+        </Grid>
+
+        <Grid item xs={12} md={2}>
+          <TextField
+            select
+            label="Relationship"
+            fullWidth
+            sx={{ width: 150 }}
+            defaultValue=""
+            {...register("relationship")}
+            error={!!errors.relationship}
+            helperText={errors.relationship?.message}
+          >
+            <MenuItem value="family">Family</MenuItem>
+            <MenuItem value="friend">Friend</MenuItem>
+            <MenuItem value="colleague">Colleague</MenuItem>
+            <MenuItem value="partner">Partner</MenuItem>
           </TextField>
         </Grid>
 
@@ -181,7 +221,7 @@ export default function BirthdayPanel() {
 
         <Grid item xs={12}>
           <TextField
-            label="Email"
+            label="Email ID"
             fullWidth
             {...register("email")}
             error={!!errors.email}
@@ -190,9 +230,21 @@ export default function BirthdayPanel() {
         </Grid>
 
         <Grid item xs={12}>
+          <TextField
+            label="Contact Number"
+            type="number"
+            fullWidth
+            {...register("contact")}
+            error={!!errors.contact}
+            helperText={errors.contact?.message}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
           <Button
             variant="contained"
-            sx={{ py: 2 }}
+            sx={{ py: 2, backgroundColor: "#ff6c2f" }}
+            startIcon={<SaveIcon />}
             disabled={isSubmitting}
             onClick={handleSubmit(onSubmit)}
           >
@@ -209,39 +261,8 @@ export default function BirthdayPanel() {
       </Typography>
 
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TableContainer component={Paper} sx={{ mt: 3 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Gender</TableCell>
-                  <TableCell>DOB</TableCell>
-                  <TableCell>Email</TableCell>
-                  {role === "admin" && <TableCell>Added By</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {birthdays.map((b) => (
-                  <TableRow key={b._id}>
-                    <TableCell>{b.name}</TableCell>
-                    <TableCell>{b.age}</TableCell>
-                    <TableCell>{b.gender}</TableCell>
-                    <TableCell>{b.dob}</TableCell>
-                    <TableCell>{b.email}</TableCell>
-                    {role === "admin" && (
-                      <TableCell>
-                        {b.createdBy_name && b.createdBy_email
-                          ? `${b.createdBy_name} (${b.createdBy_email})`
-                          : "Unknown"}
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        <Grid item xs={12} sx={{ width: "100%" }}>
+          <CommonTable columns={columns} data={birthdays} />
         </Grid>
       </Grid>
 

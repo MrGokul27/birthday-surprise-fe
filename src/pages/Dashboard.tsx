@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import AdminPanel from "./AdminPanel";
 import BirthdayPanel from "./BirthdayPanel";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import CakeIcon from "@mui/icons-material/Cake";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export default function Dashboard() {
   const role = localStorage.getItem("role");
@@ -24,7 +27,7 @@ export default function Dashboard() {
         minWidth={240}
         maxWidth={240}
         bgcolor="#262d34"
-        color={"#9097a7"}
+        color={"#fff"}
         p={2}
         display="flex"
         flexDirection="column"
@@ -39,14 +42,47 @@ export default function Dashboard() {
           onChange={(_, v) => setTab(v)}
           sx={{
             flexGrow: 1,
+
             "& .MuiTab-root": {
-              alignItems: "flex-start",
+              color: "#9097a7",
+              alignItems: "center",
+              justifyContent: "flex-start",
               textAlign: "left",
+              borderRadius: 1,
+              gap: 1.5,
+              minHeight: 48,
+              px: 2,
+              transition: "all 0.2s ease",
+
+              "&:hover": {
+                color: "#fff",
+                backgroundColor: "rgba(255,255,255,0.08)",
+              },
+            },
+
+            "& .MuiTab-root.Mui-selected": {
+              color: "#fff",
+              backgroundColor: "#ff6c2f",
+            },
+
+            "& .MuiTabs-indicator": {
+              display: "none",
             },
           }}
         >
-          {role === "admin" && <Tab label="Admin Panel" />}
-          <Tab label="Birthday Details" />
+          {role === "admin" && (
+            <Tab
+              icon={<AdminPanelSettingsIcon />}
+              iconPosition="start"
+              label="Admin Panel"
+            />
+          )}
+          <Tab
+            icon={<CakeIcon />}
+            iconPosition="start"
+            label="Birthday Details"
+          />
+          <Tab icon={<SettingsIcon />} iconPosition="start" label="Settings" />
         </Tabs>
 
         <Button
@@ -54,7 +90,7 @@ export default function Dashboard() {
           color="error"
           startIcon={<LogoutIcon />}
           onClick={handleLogout}
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, py: 1.5 }}
         >
           Logout
         </Button>
