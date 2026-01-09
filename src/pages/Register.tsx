@@ -1,8 +1,8 @@
 import {
   Button,
   TextField,
-  Container,
   Box,
+  Grid,
   Typography,
   Snackbar,
   Alert,
@@ -13,6 +13,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import bgImage from "../assets/images/pngtree-friend-birthday-vector-png-image_11071141.png";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 /* 🔒 Validation Schema */
 const schema = yup.object({
@@ -75,60 +77,105 @@ export default function Register() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <h2>Register</h2>
-
-      <TextField
-        label="Name"
-        fullWidth
-        margin="normal"
-        {...register("name")}
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
-
-      <TextField
-        label="Email"
-        fullWidth
-        margin="normal"
-        {...register("email")}
-        error={!!errors.email}
-        helperText={errors.email?.message}
-      />
-
-      <TextField
-        label="Password"
-        type="password"
-        fullWidth
-        margin="normal"
-        {...register("password")}
-        error={!!errors.password}
-        helperText={errors.password?.message}
-      />
-
-      <Button
-        fullWidth
-        variant="contained"
-        sx={{ mt: 2, py: 1.5 }}
-        type="submit"
-        disabled={isSubmitting}
-        onClick={handleSubmit(onSubmit)}
+    <Box
+      sx={{
+        background: "linear-gradient(135deg, #fedce4 0%, #fbb1c8 100%)",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Grid
+        container
+        maxWidth="xl"
+        spacing={4}
+        alignItems="center"
+        justifyContent="center"
       >
-        Register
-      </Button>
+        <Grid item xs={12} md={6}>
+          <Box
+            component="img"
+            src={bgImage}
+            alt="Birthday Cake"
+            sx={{
+              width: { xs: 300, sm: 400, md: 500, lg: 600 },
+              height: "auto",
+              ":hover": { transform: "scale(1.05)" },
+              transition: "transform 0.3s ease-in-out",
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box
+            px={4}
+            py={6}
+            sx={{
+              boxShadow: "0 10px 30px rgba(127, 54, 39, 0.4)",
+            }}
+            borderRadius={2}
+          >
+            <h2 style={{ fontSize: "2rem", color: "#7f3627" }}>Register Now</h2>
 
-      {/* 🔙 RETURN TO LOGIN */}
-      <Box mt={2} textAlign="center">
-        <Typography
-          variant="body2"
-          sx={{ cursor: "pointer", color: "primary.main" }}
-          onClick={() => navigate("/")}
-        >
-          Back to Login
-        </Typography>
-      </Box>
+            <TextField
+              label="Name"
+              fullWidth
+              margin="normal"
+              {...register("name")}
+              error={!!errors.name}
+              helperText={errors.name?.message}
+            />
 
-      {/* 🔔 TOAST MESSAGE */}
+            <TextField
+              label="Email"
+              fullWidth
+              margin="normal"
+              {...register("email")}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            />
+
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<PersonAddIcon />}
+              sx={{ mt: 2, py: 1.5, backgroundColor: "#7f3627" }}
+              type="submit"
+              disabled={isSubmitting}
+              onClick={handleSubmit(onSubmit)}
+            >
+              Register
+            </Button>
+
+            {/* 🔙 RETURN TO LOGIN */}
+            <Box mt={2} textAlign="center">
+              <Typography
+                variant="body2"
+                sx={{
+                  cursor: "pointer",
+                  color: "primary.main",
+                  fontWeight: 500,
+                }}
+                onClick={() => navigate("/")}
+              >
+                Back to Login
+              </Typography>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+
+      {/* 🔔 TOAST */}
       <Snackbar
         open={toast.open}
         autoHideDuration={3000}
@@ -143,6 +190,6 @@ export default function Register() {
           {toast.message}
         </Alert>
       </Snackbar>
-    </Container>
+    </Box>
   );
 }

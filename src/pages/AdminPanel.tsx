@@ -1,3 +1,4 @@
+import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -14,8 +15,10 @@ export default function AdminPanel() {
   }, []);
 
   return (
-    <>
-      <h3>Total Users: {count}</h3>
-    </>
+    <Box>
+      <Typography variant="h6" mb={2}>
+        Total Users: {count}
+      </Typography>
+    </Box>
   );
 }

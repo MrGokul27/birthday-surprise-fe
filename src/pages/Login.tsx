@@ -13,7 +13,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useState } from "react";
-import bgImage from "../assets/images/—Pngtree—customizable happy birthday cake for_20334565.png";
+import bgImage from "../assets/images/pngtree-friend-birthday-vector-png-image_11071141.png";
+import LoginIcon from "@mui/icons-material/Login";
 
 /* 🔒 Validation Schema */
 const schema = yup.object({
@@ -76,16 +77,11 @@ export default function Login() {
   return (
     <Box
       sx={{
-        // backgroundImage: `url(${bgImage})`,
         background: "linear-gradient(135deg, #fedce4 0%, #fbb1c8 100%)",
-        // backgroundSize: "contain",
-        // backgroundPosition: "start",
-        // backgroundRepeat: "no-repeat",
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        // pr: { xs: 0, sm: 0, md: 20 },
       }}
     >
       <Grid
@@ -109,7 +105,14 @@ export default function Login() {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <Box px={4} py={6} boxShadow={3} borderRadius={2}>
+          <Box
+            px={4}
+            py={6}
+            sx={{
+              boxShadow: "0 10px 30px rgba(127, 54, 39, 0.4)",
+            }}
+            borderRadius={2}
+          >
             <h2 style={{ fontSize: "2rem", color: "#7f3627" }}>
               Start a surprise for your loved one.
             </h2>
@@ -135,7 +138,8 @@ export default function Login() {
             <Button
               fullWidth
               variant="contained"
-              sx={{ mt: 2, py: 1.5 }}
+              startIcon={<LoginIcon />}
+              sx={{ mt: 2, py: 1.5, backgroundColor: "#7f3627" }}
               disabled={isSubmitting}
               onClick={handleSubmit(onSubmit)}
             >
