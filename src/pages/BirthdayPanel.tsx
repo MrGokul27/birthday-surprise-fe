@@ -8,13 +8,22 @@ import {
   Alert,
   MenuItem,
 } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import SaveIcon from "@mui/icons-material/Save";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CommonTable from "../components/common/CommonTable";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../store";
+import {
+  fetchBirthdays,
+  addBirthday,
+  updateBirthday,
+  deleteBirthday,
+} from "../store/birthdaySlice";
 
 /* 🔒 Validation Schema */
 const schema = yup.object({
@@ -28,38 +37,20 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-type Birthday = {
-  _id: string;
-  name: string;
-  age: number;
-  gender: string;
-  relationship: string;
-  contact: string;
-  dob: string;
-  email: string;
-};
-
 export default function BirthdayPanel() {
   const role = localStorage.getItem("role");
 
-  const [birthdays, setBirthdays] = useState<Birthday[]>([]);
-  const [toast, setToast] = useState<{
-    open: boolean;
-    message: string;
-    severity: "success" | "error";
-  }>({
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: birthdays, loading } = useSelector(
+    (state: RootState) => state.birthday
+  );
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const [toast, setToast] = useState({
     open: false,
     message: "",
-    severity: "success",
-  });
-
-  const token = localStorage.getItem("token");
-
-  const axiosAuth = axios.create({
-    baseURL: "http://localhost:5000/api",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    severity: "success" as "success" | "error",
   });
 
   const {
@@ -74,55 +65,86 @@ export default function BirthdayPanel() {
 
   const dob = watch("dob");
 
+  /* 🎂 Age Calculation */
   const calculateAge = (dob: string) => {
     const birthDate = new Date(dob);
     const today = new Date();
-
     let age = today.getFullYear() - birthDate.getFullYear();
     const m = today.getMonth() - birthDate.getMonth();
-
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
     return age;
   };
 
-  const fetchBirthdays = async () => {
-    const res = await axiosAuth.get("/birthday");
-    setBirthdays(res.data);
-  };
-
   useEffect(() => {
-    fetchBirthdays();
-  }, []);
+    dispatch(fetchBirthdays());
+  }, [dispatch]);
 
+  /* 💾 ADD / UPDATE */
   const onSubmit = async (data: FormData) => {
     try {
       const age = calculateAge(data.dob);
 
-      await axiosAuth.post("/birthday", {
-        ...data,
-        age,
-      });
+      if (editingId) {
+        await dispatch(
+          updateBirthday({
+            id: editingId,
+            data: { ...data, age },
+          })
+        ).unwrap();
 
-      setToast({
-        open: true,
-        message: "Birthday details saved successfully 🎉",
-        severity: "success",
-      });
+        setToast({
+          open: true,
+          message: "Birthday updated successfully 🎉",
+          severity: "success",
+        });
+      } else {
+        await dispatch(addBirthday({ ...data, age })).unwrap();
+
+        setToast({
+          open: true,
+          message: "Birthday added successfully 🎂",
+          severity: "success",
+        });
+      }
 
       reset();
-      fetchBirthdays();
-    } catch (err: any) {
+      setEditingId(null);
+    } catch {
       setToast({
         open: true,
-        message:
-          err.response?.data?.message || "Failed to save birthday details",
+        message: "Something went wrong",
         severity: "error",
       });
     }
   };
 
+  /* ✏️ Edit */
+  const handleEdit = (row: any) => {
+    setEditingId(row._id);
+    reset({
+      name: row.name,
+      gender: row.gender,
+      relationship: row.relationship,
+      dob: row.dob,
+      email: row.email,
+      contact: row.contact,
+    });
+  };
+
+  /* 🗑 Delete */
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete?")) return;
+
+    await dispatch(deleteBirthday(id)).unwrap();
+
+    setToast({
+      open: true,
+      message: "Birthday deleted successfully",
+      severity: "success",
+    });
+  };
+
+  /* 📊 Table Columns */
   const columns = [
     { key: "name", label: "Name" },
     { key: "age", label: "Age" },
@@ -131,32 +153,45 @@ export default function BirthdayPanel() {
     { key: "dob", label: "DOB" },
     { key: "contact", label: "Contact" },
     { key: "email", label: "Email" },
-
     ...(role === "admin"
       ? [
           {
             key: "addedBy",
             label: "Added By",
-            render: (row) =>
-              row.createdBy_name && row.createdBy_email
-                ? `${row.createdBy_name} (${row.createdBy_email})`
-                : "Unknown",
+            render: (row: any) =>
+              `${row.createdBy_name} (${row.createdBy_email})`,
           },
         ]
       : []),
+    {
+      key: "actions",
+      label: "Actions",
+      render: (row: any) => (
+        <>
+          <Grid sx={{ display: "flex" }}>
+            <Button size="small" onClick={() => handleEdit(row)}>
+              <EditIcon sx={{ color: "#888" }} />
+            </Button>
+            <Button size="small" onClick={() => handleDelete(row._id)}>
+              <DeleteIcon sx={{ color: "#888" }} />
+            </Button>
+          </Grid>
+        </>
+      ),
+    },
   ];
 
   return (
     <Box sx={{ p: 3, boxShadow: 4, borderRadius: 4 }}>
       <Typography variant="h5" mb={2}>
-        Add Birthday Person & their Details
+        {editingId ? "Update Birthday Details" : "Add Birthday Details"}
       </Typography>
 
       {/* FORM */}
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <TextField
-            label="Full Name"
+            label="Name"
             fullWidth
             {...register("name")}
             error={!!errors.name}
@@ -200,8 +235,8 @@ export default function BirthdayPanel() {
 
         <Grid item xs={12} md={3}>
           <TextField
-            label="Date of Birth"
             type="date"
+            label="DOB"
             fullWidth
             InputLabelProps={{ shrink: true }}
             {...register("dob")}
@@ -248,8 +283,21 @@ export default function BirthdayPanel() {
             disabled={isSubmitting}
             onClick={handleSubmit(onSubmit)}
           >
-            Save Birthday Details
+            {editingId ? "Update Birthday" : "Save Birthday"}
           </Button>
+
+          {editingId && (
+            <Button
+              variant="outlined"
+              sx={{ py: 2, ml: 2, color: "#ff6c2f", borderColor: "#ff6c2f" }}
+              onClick={() => {
+                reset();
+                setEditingId(null);
+              }}
+            >
+              Cancel Edit
+            </Button>
+          )}
         </Grid>
       </Grid>
 
@@ -260,9 +308,9 @@ export default function BirthdayPanel() {
           : "You are viewing your birthday records"}
       </Typography>
 
-      <Grid container spacing={2}>
+      <Grid container>
         <Grid item xs={12} sx={{ width: "100%" }}>
-          <CommonTable columns={columns} data={birthdays} />
+          <CommonTable columns={columns} data={birthdays} loading={loading} />
         </Grid>
       </Grid>
 
