@@ -20,17 +20,22 @@ export default function Dashboard() {
   };
 
   return (
-    <Box display="flex" height="100vh">
-      {/* LEFT SIDE PANEL */}
+    <Box
+      sx={{
+        height: "100vh",
+        display: "grid",
+        gridTemplateColumns: "270px 1fr",
+        overflow: "hidden",
+      }}
+    >
       <Box
-        width={240}
-        minWidth={240}
-        maxWidth={240}
-        bgcolor="#262d34"
-        color={"#fff"}
-        p={2}
-        display="flex"
-        flexDirection="column"
+        sx={{
+          bgcolor: "#262d34",
+          color: "#fff",
+          p: 2,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         <Typography variant="h6" mb={2}>
           Dashboard
@@ -42,29 +47,22 @@ export default function Dashboard() {
           onChange={(_, v) => setTab(v)}
           sx={{
             flexGrow: 1,
-
             "& .MuiTab-root": {
               color: "#9097a7",
-              alignItems: "center",
               justifyContent: "flex-start",
-              textAlign: "left",
               borderRadius: 1,
               gap: 1.5,
               minHeight: 48,
               px: 2,
-              transition: "all 0.2s ease",
-
               "&:hover": {
                 color: "#fff",
                 backgroundColor: "rgba(255,255,255,0.08)",
               },
             },
-
             "& .MuiTab-root.Mui-selected": {
               color: "#fff",
               backgroundColor: "#ff6c2f",
             },
-
             "& .MuiTabs-indicator": {
               display: "none",
             },
@@ -96,10 +94,18 @@ export default function Dashboard() {
         </Button>
       </Box>
 
-      {/* RIGHT SIDE CONTENT */}
-      <Box flexGrow={1} bgcolor={"#f9f7f7"} p={3}>
-        {role === "admin" && tab === 0 && <AdminPanel />}
-        {(role !== "admin" ? tab === 0 : tab === 1) && <BirthdayPanel />}
+      {/* RIGHT CONTENT */}
+      <Box
+        sx={{
+          bgcolor: "#f9f7f7",
+          p: 3,
+          overflowY: "auto",
+        }}
+      >
+        <Box minHeight="auto">
+          {role === "admin" && tab === 0 && <AdminPanel />}
+          {(role !== "admin" ? tab === 0 : tab === 1) && <BirthdayPanel />}
+        </Box>
       </Box>
     </Box>
   );
