@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import birthdayReducer from "./birthdaySlice";
+import userReducer from "./userSlice";
 
 export const store = configureStore({
     reducer: {
         birthday: birthdayReducer,
+        user: userReducer,
     },
 });
 

@@ -4,26 +4,27 @@ import {
   TextField,
   Typography,
   Grid,
+  GridLegacy,
   Snackbar,
   Alert,
   MenuItem,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CommonTable from "../components/common/CommonTable";
+import CommonTable from "../../components/common/CommonTable";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../store";
+import type { RootState, AppDispatch } from "../../store";
 import {
   fetchBirthdays,
   addBirthday,
   updateBirthday,
   deleteBirthday,
-} from "../store/birthdaySlice";
+} from "../../store/birthdaySlice";
 
 /* 🔒 Validation Schema */
 const schema = yup.object({
@@ -37,7 +38,7 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-export default function BirthdayPanel() {
+export default function BirthdayDetails() {
   const role = localStorage.getItem("role");
 
   const dispatch = useDispatch<AppDispatch>();
@@ -53,14 +54,25 @@ export default function BirthdayPanel() {
     severity: "success" as "success" | "error",
   });
 
+  const emptyForm: FormData = {
+    name: "",
+    gender: "",
+    relationship: "",
+    dob: "",
+    email: "",
+    contact: "",
+  };
+
   const {
     register,
     handleSubmit,
     reset,
+    control,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(schema),
+    defaultValues: emptyForm,
   });
 
   const dob = watch("dob");
@@ -107,7 +119,7 @@ export default function BirthdayPanel() {
         });
       }
 
-      reset();
+      reset(emptyForm);
       setEditingId(null);
     } catch {
       setToast({
@@ -182,58 +194,73 @@ export default function BirthdayPanel() {
   ];
 
   return (
-    <Box sx={{ p: 3, boxShadow: 4, borderRadius: 4 }}>
+    <Box>
       <Typography variant="h5" mb={2}>
-        {editingId ? "Update Birthday Details" : "Add Birthday Details"}
+        {editingId
+          ? "Update Birthday Person's Detail"
+          : "Add Birthday Person's Detail"}
       </Typography>
 
       {/* FORM */}
       <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
+        <GridLegacy item xs={12} md={4}>
           <TextField
             label="Name"
             fullWidth
+            InputLabelProps={{ shrink: !!watch("name") }}
             {...register("name")}
             error={!!errors.name}
             helperText={errors.name?.message}
           />
-        </Grid>
+        </GridLegacy>
 
-        <Grid item xs={12} md={2}>
-          <TextField
-            select
-            label="Gender"
-            fullWidth
-            sx={{ width: 150 }}
-            defaultValue=""
-            {...register("gender")}
-            error={!!errors.gender}
-            helperText={errors.gender?.message}
-          >
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Female">Female</MenuItem>
-          </TextField>
-        </Grid>
+        <GridLegacy item xs={12} md={2}>
+          <Controller
+            name="gender"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                select
+                label="Gender"
+                fullWidth
+                sx={{ width: 150 }}
+                {...field}
+                error={!!errors.gender}
+                helperText={errors.gender?.message}
+              >
+                <MenuItem value="">Select</MenuItem>
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+              </TextField>
+            )}
+          />
+        </GridLegacy>
 
-        <Grid item xs={12} md={2}>
-          <TextField
-            select
-            label="Relationship"
-            fullWidth
-            sx={{ width: 150 }}
-            defaultValue=""
-            {...register("relationship")}
-            error={!!errors.relationship}
-            helperText={errors.relationship?.message}
-          >
-            <MenuItem value="family">Family</MenuItem>
-            <MenuItem value="friend">Friend</MenuItem>
-            <MenuItem value="colleague">Colleague</MenuItem>
-            <MenuItem value="partner">Partner</MenuItem>
-          </TextField>
-        </Grid>
+        <GridLegacy item xs={12} md={2}>
+          <Controller
+            name="relationship"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                select
+                label="Relationship"
+                fullWidth
+                sx={{ width: 150 }}
+                {...field}
+                error={!!errors.relationship}
+                helperText={errors.relationship?.message}
+              >
+                <MenuItem value="">Select</MenuItem>
+                <MenuItem value="family">Family</MenuItem>
+                <MenuItem value="friend">Friend</MenuItem>
+                <MenuItem value="colleague">Colleague</MenuItem>
+                <MenuItem value="partner">Partner</MenuItem>
+              </TextField>
+            )}
+          />
+        </GridLegacy>
 
-        <Grid item xs={12} md={3}>
+        <GridLegacy item xs={12} md={3}>
           <TextField
             type="date"
             label="DOB"
@@ -243,39 +270,41 @@ export default function BirthdayPanel() {
             error={!!errors.dob}
             helperText={errors.dob?.message}
           />
-        </Grid>
+        </GridLegacy>
 
-        <Grid item xs={12} md={3}>
+        <GridLegacy item xs={12} md={3}>
           <TextField
             label="Age"
             fullWidth
             value={dob ? calculateAge(dob) : ""}
             disabled
           />
-        </Grid>
+        </GridLegacy>
 
-        <Grid item xs={12}>
+        <GridLegacy item xs={12}>
           <TextField
             label="Email ID"
             fullWidth
+            InputLabelProps={{ shrink: !!watch("email") }}
             {...register("email")}
             error={!!errors.email}
             helperText={errors.email?.message}
           />
-        </Grid>
+        </GridLegacy>
 
-        <Grid item xs={12}>
+        <GridLegacy item xs={12}>
           <TextField
             label="Contact Number"
             type="number"
             fullWidth
+            InputLabelProps={{ shrink: !!watch("contact") }}
             {...register("contact")}
             error={!!errors.contact}
             helperText={errors.contact?.message}
           />
-        </Grid>
+        </GridLegacy>
 
-        <Grid item xs={12}>
+        <GridLegacy item xs={12}>
           <Button
             variant="contained"
             sx={{ py: 2, backgroundColor: "#ff6c2f" }}
@@ -291,27 +320,27 @@ export default function BirthdayPanel() {
               variant="outlined"
               sx={{ py: 2, ml: 2, color: "#ff6c2f", borderColor: "#ff6c2f" }}
               onClick={() => {
-                reset();
+                reset(emptyForm);
                 setEditingId(null);
               }}
             >
               Cancel Edit
             </Button>
           )}
-        </Grid>
+        </GridLegacy>
       </Grid>
 
       {/* LIST */}
       <Typography variant="body2" color="text.secondary" mt={5} mb={2}>
         {role === "admin"
           ? "You are viewing all birthday records (Admin)"
-          : "You are viewing your birthday records"}
+          : "Here are the birthday records of your loved ones."}
       </Typography>
 
       <Grid container>
-        <Grid item xs={12} sx={{ width: "100%" }}>
+        <GridLegacy item xs={12} sx={{ width: "100%" }}>
           <CommonTable columns={columns} data={birthdays} loading={loading} />
-        </Grid>
+        </GridLegacy>
       </Grid>
 
       {/* 🔔 TOAST */}

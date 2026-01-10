@@ -2,11 +2,16 @@ import { Tabs, Tab, Box, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminPanel from "./AdminPanel";
-import BirthdayPanel from "./BirthdayPanel";
+import BirthdayPanel from "./birthday/BirthdayPanel";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import Person from "@mui/icons-material/Person";
 import CakeIcon from "@mui/icons-material/Cake";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../store";
+import { fetchUser } from "../store/userSlice";
 
 export default function Dashboard() {
   const role = localStorage.getItem("role");
@@ -18,6 +23,13 @@ export default function Dashboard() {
     localStorage.removeItem("role");
     navigate("/");
   };
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: user } = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
 
   return (
     <Box
@@ -38,7 +50,8 @@ export default function Dashboard() {
         }}
       >
         <Typography variant="h6" mb={2}>
-          Dashboard
+          Welcome, <br></br>
+          {user?.name} 👋
         </Typography>
 
         <Tabs
@@ -80,6 +93,9 @@ export default function Dashboard() {
             iconPosition="start"
             label="Birthday Details"
           />
+          {role === "admin" && (
+            <Tab icon={<Person />} iconPosition="start" label="User Details" />
+          )}
           <Tab icon={<SettingsIcon />} iconPosition="start" label="Settings" />
         </Tabs>
 

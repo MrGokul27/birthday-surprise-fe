@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, GridLegacy, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -18,7 +18,7 @@ export default function AdminPanel() {
     <>
       <Box display="flex" flexDirection="column" gap={4}>
         <Grid container spacing={10}>
-          <Grid item xs={12} sm={6}>
+          <GridLegacy item xs={12} sm={6}>
             <Box
               sx={{
                 p: 3,
@@ -35,9 +35,9 @@ export default function AdminPanel() {
               <Typography variant="h6">Total Users</Typography>
               <Typography variant="h3">{count}</Typography>
             </Box>
-          </Grid>
+          </GridLegacy>
 
-          <Grid item xs={12} sm={6}>
+          <GridLegacy item xs={12} sm={6}>
             <Box
               sx={{
                 p: 3,
@@ -54,7 +54,7 @@ export default function AdminPanel() {
               <Typography variant="h6">Total Birthdays</Typography>
               <Typography variant="h3">15</Typography>
             </Box>
-          </Grid>
+          </GridLegacy>
         </Grid>
       </Box>
     </>
