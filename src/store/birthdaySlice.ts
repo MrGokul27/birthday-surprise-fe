@@ -10,7 +10,9 @@ export type Birthday = {
     contact: string;
     dob: string;
     email: string;
-    image?: boolean;
+    photos?: {
+        contentType: string;
+    }[];
 };
 
 interface BirthdayState {
@@ -78,15 +80,24 @@ export const updateBirthdayWish = createAsyncThunk(
 );
 
 /* 📸 UPLOAD IMAGE */
-export const uploadBirthdayImage = createAsyncThunk(
-    "birthday/uploadImage",
-    async ({ id, file }: { id: string; file: File }) => {
+export const uploadBirthdayImages = createAsyncThunk(
+    "birthday/uploadImages",
+    async (
+        { id, files }: { id: string; files: File[] },
+        { dispatch }
+    ) => {
         const formData = new FormData();
-        formData.append("image", file);
 
-        await api.patch(`/birthday/${id}/image`, formData, {
+        files.forEach((file) => {
+            formData.append("images", file); // 🔥 MUST be "images"
+        });
+
+        await api.patch(`/birthday/${id}/images`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
+
+        // 🔁 refresh list so photos appear
+        dispatch(fetchBirthdays());
 
         return id;
     }

@@ -7,6 +7,8 @@ import {
   TablePagination,
   TextField,
   Box,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
 
@@ -19,6 +21,7 @@ export type Column<T> = {
 type Props<T> = {
   columns: Column<T>[];
   data: T[];
+  loading?: boolean;
   emptyMessage?: string;
   rowsPerPageOptions?: number[];
 };
@@ -26,6 +29,7 @@ type Props<T> = {
 export default function CommonTable<T>({
   columns,
   data,
+  loading = false,
   emptyMessage = "No records found",
   rowsPerPageOptions = [5, 10, 25],
 }: Props<T>) {
@@ -76,7 +80,27 @@ export default function CommonTable<T>({
         </TableHead>
 
         <TableBody>
-          {paginatedData.length === 0 ? (
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} align="center">
+                <Box
+                  py={5}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  gap={1}
+                >
+                  <CircularProgress sx={{ color: "#ff6c2f" }} />
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "#ff6c2f", fontWeight: 500 }}
+                  >
+                    Loading...
+                  </Typography>
+                </Box>
+              </TableCell>
+            </TableRow>
+          ) : paginatedData.length === 0 ? (
             <TableRow>
               <TableCell colSpan={columns.length} align="center">
                 {emptyMessage}

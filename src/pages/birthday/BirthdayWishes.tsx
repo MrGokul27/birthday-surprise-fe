@@ -6,6 +6,7 @@ import {
   Grid,
   Snackbar,
   Alert,
+  GridLegacy,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import CommonTable from "../../components/common/CommonTable";
@@ -55,9 +56,7 @@ export default function BirthdayWishes() {
 
   const columns = [
     { key: "name", label: "Name" },
-    { key: "relationship", label: "Relationship" },
     { key: "dob", label: "DOB" },
-    { key: "age", label: "Age" },
     {
       key: "wish",
       label: "Birthday Wish",
@@ -93,9 +92,9 @@ export default function BirthdayWishes() {
       <Typography variant="h5">Add your Birthday Wishes here !!! 🎉</Typography>
 
       <Grid container>
-        <Grid item xs={12} sx={{ width: "100%" }}>
+        <GridLegacy item xs={12} sx={{ width: "100%" }}>
           <CommonTable columns={columns} data={birthdays} loading={loading} />
-        </Grid>
+        </GridLegacy>
       </Grid>
 
       {/* 🔔 TOAST */}

@@ -175,9 +175,9 @@ export default function BirthdayDetails() {
             color: "#000",
             backgroundColor:
               row.gender?.toLowerCase() === "male"
-                ? "#acd1f8"
+                ? "#dbecfe"
                 : row.gender?.toLowerCase() === "female"
-                ? "#fdb1ca"
+                ? "#f7d9e3"
                 : "#9e9e9e",
           }}
         />
