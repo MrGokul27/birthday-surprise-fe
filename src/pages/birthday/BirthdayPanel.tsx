@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
 import CommonTabs from "../../components/common/CommonTabs";
 import BirthdayDetails from "./BirthdayDetails";
-import AdminPanel from "../AdminPanel";
+import BirthdayWishes from "./BirthdayWishes";
+import BirthdayImages from "./BirthdayImages";
 
 export default function BirthdayPanel() {
   return (
@@ -14,7 +15,11 @@ export default function BirthdayPanel() {
           },
           {
             label: "Wish Content",
-            content: <AdminPanel />,
+            content: <BirthdayWishes />,
+          },
+          {
+            label: "Images Gallery",
+            content: <BirthdayImages />,
           },
         ]}
       />

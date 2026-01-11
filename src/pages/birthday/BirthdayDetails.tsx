@@ -9,6 +9,7 @@ import {
   Alert,
   MenuItem,
 } from "@mui/material";
+import { Chip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -160,7 +161,28 @@ export default function BirthdayDetails() {
   const columns = [
     { key: "name", label: "Name" },
     { key: "age", label: "Age" },
-    { key: "gender", label: "Gender" },
+    {
+      key: "gender",
+      label: "Gender",
+      render: (row: any) => (
+        <Chip
+          label={row.gender}
+          size="small"
+          sx={{
+            fontWeight: 500,
+            py:2,
+            px:1,
+            color: "#000",
+            backgroundColor:
+              row.gender?.toLowerCase() === "male"
+                ? "#acd1f8"
+                : row.gender?.toLowerCase() === "female"
+                ? "#fdb1ca"
+                : "#9e9e9e",
+          }}
+        />
+      ),
+    },
     { key: "relationship", label: "Relationship" },
     { key: "dob", label: "DOB" },
     { key: "contact", label: "Contact" },
@@ -331,7 +353,7 @@ export default function BirthdayDetails() {
       </Grid>
 
       {/* LIST */}
-      <Typography variant="body2" color="text.secondary" mt={5} mb={2}>
+      <Typography variant="body2" color="text.secondary" mt={5}>
         {role === "admin"
           ? "You are viewing all birthday records (Admin)"
           : "Here are the birthday records of your loved ones."}
