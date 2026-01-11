@@ -61,6 +61,7 @@ export const deleteBirthday = createAsyncThunk(
     }
 );
 
+/* 🎂 ADD or UPDATE WISH */
 export const updateBirthdayWish = createAsyncThunk(
     "birthday/updateWish",
     async (
@@ -76,6 +77,7 @@ export const updateBirthdayWish = createAsyncThunk(
     }
 );
 
+/* 📸 UPLOAD IMAGE */
 export const uploadBirthdayImage = createAsyncThunk(
     "birthday/uploadImage",
     async ({ id, file }: { id: string; file: File }) => {
@@ -89,8 +91,6 @@ export const uploadBirthdayImage = createAsyncThunk(
         return id;
     }
 );
-
-
 
 const birthdaySlice = createSlice({
     name: "birthday",
@@ -140,8 +140,5 @@ const birthdaySlice = createSlice({
             });
     },
 });
-
-
-
 
 export default birthdaySlice.reducer;
