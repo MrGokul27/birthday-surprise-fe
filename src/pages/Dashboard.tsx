@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminPanel from "./AdminPanel";
 import BirthdayPanel from "./birthday/BirthdayPanel";
+import UserDetails from "./UserDetails";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Person from "@mui/icons-material/Person";
@@ -121,6 +122,7 @@ export default function Dashboard() {
         <Box minHeight="auto">
           {role === "admin" && tab === 0 && <AdminPanel />}
           {(role !== "admin" ? tab === 0 : tab === 1) && <BirthdayPanel />}
+          {role === "admin" && tab === 2 && <UserDetails />}
         </Box>
       </Box>
     </Box>

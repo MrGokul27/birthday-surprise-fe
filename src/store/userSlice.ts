@@ -10,12 +10,14 @@ export interface User {
 
 interface UserState {
     data: User | null;
+    users: User[];
     loading: boolean;
     error: string | null;
 }
 
 const initialState: UserState = {
     data: null,
+    users: [],
     loading: false,
     error: null,
 };
@@ -29,16 +31,27 @@ export const fetchUser = createAsyncThunk(
     }
 );
 
+/* ✅ FETCH ALL USERS (Admin) */
+export const fetchAllUsers = createAsyncThunk(
+    "user/fetchAll",
+    async () => {
+        const res = await api.get("/users/userDetails");
+        return res.data;
+    }
+);
+
 const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
         clearUser: (state) => {
             state.data = null;
+            state.users = [];
         },
     },
     extraReducers: (builder) => {
         builder
+            /* logged-in user */
             .addCase(fetchUser.pending, (state) => {
                 state.loading = true;
             })
@@ -49,6 +62,19 @@ const userSlice = createSlice({
             .addCase(fetchUser.rejected, (state) => {
                 state.loading = false;
                 state.error = "Failed to load user";
+            })
+
+            /* all users */
+            .addCase(fetchAllUsers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchAllUsers.fulfilled, (state, action) => {
+                state.users = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchAllUsers.rejected, (state) => {
+                state.loading = false;
+                state.error = "Failed to load users";
             });
     },
 });
