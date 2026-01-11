@@ -112,10 +112,14 @@ export default function Register() {
             py={6}
             sx={{
               boxShadow: "0 10px 30px rgba(127, 54, 39, 0.4)",
+              maxWidth: 540,
+              mx: "auto",
             }}
             borderRadius={2}
           >
-            <h2 style={{ fontSize: "2rem", color: "#7f3627" }}>Register Now</h2>
+            <h2 style={{ fontSize: "2rem", color: "#7f3627" }}>
+              Join us to surprise your loved one.
+            </h2>
 
             <TextField
               label="Name"

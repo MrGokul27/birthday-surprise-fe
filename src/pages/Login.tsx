@@ -110,6 +110,8 @@ export default function Login() {
             py={6}
             sx={{
               boxShadow: "0 10px 30px rgba(127, 54, 39, 0.4)",
+              maxWidth: 540,
+              mx: "auto",
             }}
             borderRadius={2}
           >
